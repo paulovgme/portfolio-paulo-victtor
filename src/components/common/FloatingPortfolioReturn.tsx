@@ -18,7 +18,7 @@ export const FloatingPortfolioReturn: React.FC<FloatingPortfolioReturnProps> = (
   const isDarkDemo = theme === 'dark';
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 pointer-events-auto">
+    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[80] pointer-events-auto">
       <button
         onClick={() => navigate(targetPath)}
         className={`group flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm tracking-wide shadow-2xl transition-all duration-200 cursor-pointer active:scale-95 ${
@@ -28,11 +28,11 @@ export const FloatingPortfolioReturn: React.FC<FloatingPortfolioReturnProps> = (
         }`}
         title="Retornar ao Portfólio de Paulo Victtor"
       >
-        <ArrowLeft className={`w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1 ${
+        <ArrowLeft className={`w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1 shrink-0 ${
           isDarkDemo ? 'text-slate-700 group-hover:text-slate-900' : 'text-cyan-400 group-hover:text-cyan-300'
         }`} />
         <span className="hidden sm:inline">Voltar ao meu Portfólio</span>
-        <span className="inline sm:hidden">Portfólio</span>
+        <span className="inline sm:hidden font-semibold">← Portfólio</span>
       </button>
     </div>
   );

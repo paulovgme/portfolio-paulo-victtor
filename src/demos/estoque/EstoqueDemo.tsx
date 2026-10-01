@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FloatingPortfolioReturn } from '../../components/common/FloatingPortfolioReturn';
 import { INITIAL_ESTOQUE, INITIAL_MOVIMENTACOES, INITIAL_DESCARTES, EstoqueItem, MovimentacaoItem, DescarteItem } from './data/mockEstoque';
-import { Eye, EyeOff, Search, ChevronLeft, ChevronRight, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Search, ChevronLeft, ChevronRight, FileText, CheckCircle2, AlertCircle, Menu, X } from 'lucide-react';
 
 export const EstoqueDemo: React.FC = () => {
   // Authentication state for demo (default false to show the Streamlit login screen)
@@ -13,6 +13,12 @@ export const EstoqueDemo: React.FC = () => {
   // Active view in the Streamlit radio list
   const [currentNav, setCurrentNav] = useState<string>('consultar');
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+
+  const selectNav = (navId: string) => {
+    setCurrentNav(navId);
+    setMobileSidebarOpen(false);
+  };
 
   // Data states
   const [estoque, setEstoque] = useState<EstoqueItem[]>(INITIAL_ESTOQUE);
@@ -212,15 +218,39 @@ export const EstoqueDemo: React.FC = () => {
         /* ==========================================================
            INTERFACE STREAMLIT ESTOQUE (Referência exata: Captura 103524)
            ========================================================== */
-        <div className="min-h-screen flex bg-white text-slate-800">
-          {/* Streamlit Light Gray Sidebar */}
-          <aside className={`${sidebarCollapsed ? 'w-12' : 'w-72'} bg-[#f0f2f6] border-r border-[#e0e4eb] flex flex-col shrink-0 transition-all duration-150`}>
-            {/* Top Collapse Toggle */}
+        <div className="min-h-screen flex bg-white text-slate-800 relative">
+          {/* Mobile Drawer Backdrop */}
+          {mobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 md:hidden"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+          )}
+
+          {/* Streamlit Light Gray Sidebar (Drawer on mobile, Collapsible on Desktop) */}
+          <aside className={`
+            fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-[#f0f2f6] border-r border-[#e0e4eb] flex flex-col shadow-2xl transition-transform duration-200
+            md:static md:flex md:translate-x-0 md:shadow-none shrink-0
+            ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0 hidden md:flex'}
+            ${sidebarCollapsed ? 'md:w-12' : 'md:w-72'}
+          `}>
+            {/* Top Collapse / Close Toggle */}
             <div className="p-3 flex items-center justify-between text-slate-500 border-b border-[#e5e9f0]">
+              {/* On mobile: Close button */}
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(false)}
+                className="md:hidden p-1.5 rounded-md hover:bg-slate-200 text-slate-700 cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium"
+              >
+                <X className="w-4 h-4" />
+                <span>Fechar menu</span>
+              </button>
+
+              {/* On desktop: standard collapse/expand button */}
               {!sidebarCollapsed && (
                 <button
                   onClick={() => setSidebarCollapsed(true)}
-                  className="p-1 hover:text-slate-900 text-xs font-mono flex items-center gap-1 cursor-pointer"
+                  className="hidden md:flex p-1 hover:text-slate-900 text-xs font-mono items-center gap-1 cursor-pointer"
                   title="Recolher menu"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -230,7 +260,7 @@ export const EstoqueDemo: React.FC = () => {
               {sidebarCollapsed && (
                 <button
                   onClick={() => setSidebarCollapsed(false)}
-                  className="p-1 hover:text-slate-900 mx-auto cursor-pointer"
+                  className="hidden md:block p-1 hover:text-slate-900 mx-auto cursor-pointer"
                   title="Expandir menu"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -238,7 +268,7 @@ export const EstoqueDemo: React.FC = () => {
               )}
             </div>
 
-            {!sidebarCollapsed && (
+            {(!sidebarCollapsed || mobileSidebarOpen) && (
               <div className="p-5 flex-1 flex flex-col justify-between space-y-6 overflow-y-auto">
                 <div className="space-y-6">
                   {/* Greeting matching screenshot */}
@@ -269,8 +299,8 @@ export const EstoqueDemo: React.FC = () => {
                         return (
                           <button
                             key={item.id}
-                            onClick={() => setCurrentNav(item.id)}
-                            className={`w-full flex items-center gap-2.5 py-1.5 px-2 rounded-md transition-colors text-left ${
+                            onClick={() => selectNav(item.id)}
+                            className={`w-full flex items-center gap-2.5 py-1.5 px-2 rounded-md transition-colors text-left cursor-pointer ${
                               selected ? 'text-slate-900 font-semibold' : 'text-slate-700 hover:text-slate-900'
                             }`}
                           >
@@ -293,7 +323,7 @@ export const EstoqueDemo: React.FC = () => {
                 {/* Sair / Logoff button matching screenshot */}
                 <div className="pt-6 border-t border-[#e2e8f0]">
                   <button
-                    onClick={() => setIsAuthenticated(false)}
+                    onClick={() => { setIsAuthenticated(false); setMobileSidebarOpen(false); }}
                     className="w-full py-1.5 px-3 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-medium shadow-xs transition-colors cursor-pointer"
                   >
                     Sair / Logoff
@@ -304,11 +334,31 @@ export const EstoqueDemo: React.FC = () => {
           </aside>
 
           {/* Streamlit Main Content Area */}
-          <main className="flex-1 flex flex-col min-w-0 bg-white p-6 sm:p-10">
-            {/* Streamlit Top Header (Fork, 3-dots) */}
-            <div className="flex items-center justify-end gap-3 text-xs text-slate-500 pb-4">
-              <span>Fork</span>
-              <span>⋮</span>
+          <main className="flex-1 flex flex-col min-w-0 bg-white p-4 sm:p-6 lg:p-10 w-full overflow-x-hidden">
+            {/* Streamlit Top Header with Mobile Hamburger */}
+            <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 mb-4 sm:mb-6">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMobileSidebarOpen(true)}
+                  className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#f0f2f6] hover:bg-[#e2e8f0] text-slate-800 text-xs font-semibold cursor-pointer active:scale-95 border border-slate-300 shadow-2xs"
+                  aria-label="Abrir menu de navegação"
+                >
+                  <Menu className="w-4 h-4 text-red-500" />
+                  <span>Menu</span>
+                </button>
+
+                <span className="text-xs font-bold text-slate-700 md:hidden flex items-center gap-1">
+                  <span>📦</span>
+                  <span>Estoque TI</span>
+                </span>
+              </div>
+
+              {/* Streamlit Top Header (Fork, 3-dots) */}
+              <div className="flex items-center gap-3 text-xs text-slate-500">
+                <span>Fork</span>
+                <span>⋮</span>
+              </div>
             </div>
 
             {/* View 1: 📊 Consultar Estoque (Exact replica of screenshot Captura 103524) */}
@@ -510,7 +560,7 @@ export const EstoqueDemo: React.FC = () => {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-700 block">Categoria</label>
                       <select
@@ -539,7 +589,7 @@ export const EstoqueDemo: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-700 block">Modelo</label>
                       <input

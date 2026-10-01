@@ -35,6 +35,7 @@ import {
   KeyRound, 
   Terminal,
   LifeBuoy,
+  Menu,
   X
 } from 'lucide-react';
 
@@ -47,6 +48,7 @@ export const SentinelDemo: React.FC = () => {
 
   // Active view in the dashboard
   const [activeMenu, setActiveMenu] = useState<string>('monitoria');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [soundActive, setSoundActive] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<'todos' | 'criticos' | 'alertas' | 'atendimento'>('todos');
   
@@ -75,6 +77,11 @@ export const SentinelDemo: React.FC = () => {
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsAuthenticated(true);
+  };
+
+  const selectMenu = (menuKey: string) => {
+    setActiveMenu(menuKey);
+    setMobileSidebarOpen(false);
   };
 
   const handleRefresh = () => {
@@ -241,9 +248,21 @@ export const SentinelDemo: React.FC = () => {
         /* ==========================================================
            INTERFACE PRINCIPAL NOC SENTINELTI (Referência: Captura 103543)
            ========================================================== */
-        <div className="min-h-screen flex bg-[#070b14] text-slate-200">
-          {/* NOC Left Sidebar */}
-          <aside className="w-64 bg-[#090e1a] border-r border-[#152033] flex flex-col shrink-0">
+        <div className="min-h-screen flex bg-[#070b14] text-slate-200 relative overflow-x-hidden">
+          {/* Mobile Drawer Backdrop */}
+          {mobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 lg:hidden"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+          )}
+
+          {/* NOC Left Sidebar (Fixed Drawer on Mobile, Static on Desktop) */}
+          <aside className={`
+            fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-[#090e1a] border-r border-[#152033] flex flex-col shadow-2xl transition-transform duration-200
+            lg:static lg:w-64 lg:flex lg:translate-x-0 lg:shadow-none shrink-0
+            ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 hidden lg:flex'}
+          `}>
             {/* Top Brand Lockup */}
             <div className="p-4 border-b border-[#152033] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -258,6 +277,16 @@ export const SentinelDemo: React.FC = () => {
                   <span className="text-[10px] text-slate-400 block font-mono">developed by Paulo Victtor</span>
                 </div>
               </div>
+
+              {/* Close Button on Mobile Drawer */}
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(false)}
+                className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 cursor-pointer active:scale-95"
+                aria-label="Fechar menu lateral"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Navigation Menus */}
@@ -270,7 +299,7 @@ export const SentinelDemo: React.FC = () => {
                 </div>
                 <div className="space-y-0.5 mt-1">
                   <button
-                    onClick={() => setActiveMenu('monitoria')}
+                    onClick={() => selectMenu('monitoria')}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors ${
                       activeMenu === 'monitoria'
                         ? 'bg-[#0e213b] text-cyan-300 border border-cyan-500/30'
@@ -283,7 +312,7 @@ export const SentinelDemo: React.FC = () => {
 
                   <button
                     onClick={() => {
-                      setActiveMenu('ocorrencias');
+                      selectMenu('ocorrencias');
                       toggleSimulateIncidents();
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${
@@ -304,7 +333,7 @@ export const SentinelDemo: React.FC = () => {
                   </button>
 
                   <button
-                    onClick={() => setActiveMenu('descobertas')}
+                    onClick={() => selectMenu('descobertas')}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors ${
                       activeMenu === 'descobertas'
                         ? 'bg-[#0e213b] text-cyan-300 border border-cyan-500/30'
@@ -316,7 +345,10 @@ export const SentinelDemo: React.FC = () => {
                   </button>
 
                   <button
-                    onClick={() => setShowPingModal(true)}
+                    onClick={() => {
+                      setShowPingModal(true);
+                      setMobileSidebarOpen(false);
+                    }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 hover:bg-[#0c1524] transition-colors"
                   >
                     <Terminal className="w-3.5 h-3.5 text-slate-400" />
@@ -324,7 +356,7 @@ export const SentinelDemo: React.FC = () => {
                   </button>
 
                   <button
-                    onClick={() => setActiveMenu('glpi')}
+                    onClick={() => selectMenu('glpi')}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 hover:bg-[#0c1524] transition-colors"
                   >
                     <LifeBuoy className="w-3.5 h-3.5 text-slate-400" />
@@ -340,31 +372,31 @@ export const SentinelDemo: React.FC = () => {
                   <ChevronDown className="w-3 h-3" />
                 </div>
                 <div className="space-y-0.5 mt-1">
-                  <button onClick={() => setActiveMenu('links')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('links')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Layers className="w-3.5 h-3.5" />
                     <span>Links de Rede</span>
                   </button>
-                  <button onClick={() => setActiveMenu('roteadores')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('roteadores')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Server className="w-3.5 h-3.5" />
                     <span>Roteadores</span>
                   </button>
-                  <button onClick={() => setActiveMenu('cameras')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('cameras')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Video className="w-3.5 h-3.5" />
                     <span>Câmeras IP</span>
                   </button>
-                  <button onClick={() => setActiveMenu('antenas')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('antenas')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Radio className="w-3.5 h-3.5" />
                     <span>Antenas & Rádios</span>
                   </button>
-                  <button onClick={() => setActiveMenu('impressoras')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('impressoras')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Printer className="w-3.5 h-3.5" />
                     <span>Impressoras</span>
                   </button>
-                  <button onClick={() => setActiveMenu('voip')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('voip')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <PhoneCall className="w-3.5 h-3.5" />
                     <span>Ramais VoIP</span>
                   </button>
-                  <button onClick={() => alert('Em ambiente de demonstração, novos equipamentos são cadastrados via perfil de administrador.')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-cyan-400 hover:text-cyan-300 hover:bg-[#0c1524]">
+                  <button onClick={() => { alert('Em ambiente de demonstração, novos equipamentos são cadastrados via perfil de administrador.'); setMobileSidebarOpen(false); }} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-cyan-400 hover:text-cyan-300 hover:bg-[#0c1524]">
                     <PlusCircle className="w-3.5 h-3.5" />
                     <span>Novo Equipamento</span>
                   </button>
@@ -378,19 +410,19 @@ export const SentinelDemo: React.FC = () => {
                   <ChevronDown className="w-3 h-3" />
                 </div>
                 <div className="space-y-0.5 mt-1">
-                  <button onClick={() => setActiveMenu('sla')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('sla')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <FileText className="w-3.5 h-3.5" />
                     <span>Relatórios SLA</span>
                   </button>
-                  <button onClick={() => setActiveMenu('metricas')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('metricas')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <BarChart3 className="w-3.5 h-3.5" />
                     <span>Gráficos de Métricas</span>
                   </button>
-                  <button onClick={() => setActiveMenu('usuarios')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('usuarios')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <Users className="w-3.5 h-3.5" />
                     <span>Usuários</span>
                   </button>
-                  <button onClick={() => setActiveMenu('rbac')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
+                  <button onClick={() => selectMenu('rbac')} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1524]">
                     <KeyRound className="w-3.5 h-3.5" />
                     <span>Permissões RBAC</span>
                   </button>
@@ -401,7 +433,7 @@ export const SentinelDemo: React.FC = () => {
             {/* Logout link at bottom of sidebar */}
             <div className="p-3 border-t border-[#152033]">
               <button
-                onClick={() => setIsAuthenticated(false)}
+                onClick={() => { setIsAuthenticated(false); setMobileSidebarOpen(false); }}
                 className="w-full py-1.5 px-2 text-[11px] font-mono text-slate-400 hover:text-rose-400 text-center transition-colors block"
               >
                 Encerrar Sessão NOC
@@ -409,20 +441,33 @@ export const SentinelDemo: React.FC = () => {
             </div>
           </aside>
 
-          {/* Main NOC Content Area */}
-          <main className="flex-1 flex flex-col min-w-0 bg-[#070b14]">
-            {/* Topbar matching screenshot */}
-            <header className="h-14 bg-[#090e1a] border-b border-[#152033] px-6 flex items-center justify-between gap-4">
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-                <span>SentinelTI</span>
-                <span className="text-slate-600">&gt;</span>
-                <span>Operação</span>
-                <span className="text-slate-600">&gt;</span>
-                <span className="text-white font-semibold">Monitoria NOC</span>
+          {/* Main NOC Content Area (Full Width on Mobile) */}
+          <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden bg-[#070b14]">
+            {/* Topbar matching screenshot with mobile hamburger */}
+            <header className="h-14 bg-[#090e1a] border-b border-[#152033] px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 shrink-0">
+              {/* Left: Hamburger Button on Mobile + Breadcrumb */}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setMobileSidebarOpen(true)}
+                  className="lg:hidden p-2 rounded-lg bg-[#0e213b] border border-cyan-500/40 text-cyan-400 hover:text-white hover:bg-cyan-950/60 shrink-0 cursor-pointer active:scale-95 flex items-center justify-center shadow-xs"
+                  aria-label="Abrir menu lateral SentinelTI"
+                  title="Abrir menu"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+
+                <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400 truncate">
+                  <span className="text-white font-bold sm:hidden">SENTINEL<span className="text-[#00c0f0]">TI</span></span>
+                  <span className="hidden sm:inline">SentinelTI</span>
+                  <span className="hidden sm:inline text-slate-600">&gt;</span>
+                  <span className="hidden md:inline">Operação</span>
+                  <span className="hidden md:inline text-slate-600">&gt;</span>
+                  <span className="text-cyan-400 sm:text-white font-semibold truncate hidden xs:inline">Monitoria NOC</span>
+                </div>
               </div>
 
-              {/* Search Bar */}
+              {/* Search Bar (desktop) */}
               <div className="flex-1 max-w-md hidden md:block">
                 <div className="relative">
                   <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -435,17 +480,18 @@ export const SentinelDemo: React.FC = () => {
               </div>
 
               {/* Right status badges and profile */}
-              <div className="flex items-center gap-4 text-xs font-mono">
-                <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[11px]">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono shrink-0">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[10px] sm:text-[11px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Zabbix Online (1.4ms)</span>
+                  <span className="hidden sm:inline">Zabbix Online (1.4ms)</span>
+                  <span className="sm:hidden">Online</span>
                 </div>
 
-                <button className="text-slate-400 hover:text-white transition-colors relative">
+                <button className="text-slate-400 hover:text-white transition-colors relative p-1">
                   <Bell className="w-4 h-4" />
                 </button>
 
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                <div className="flex items-center gap-2 pl-1 sm:pl-2 border-l border-slate-800">
                   <div className="w-7 h-7 rounded-full bg-cyan-900 border border-cyan-400/40 flex items-center justify-center text-xs font-bold text-cyan-200">
                     A
                   </div>
@@ -458,12 +504,12 @@ export const SentinelDemo: React.FC = () => {
             </header>
 
             {/* Dashboard Body */}
-            <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+            <div className="flex-1 p-3 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto w-full max-w-full">
               {/* Dashboard Subheader */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-bold text-white tracking-tight">
+                    <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight whitespace-nowrap">
                       Monitoria em Tempo Real
                     </h1>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -473,17 +519,17 @@ export const SentinelDemo: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
                     onClick={toggleSimulateIncidents}
-                    className="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+                    className="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-center whitespace-nowrap cursor-pointer"
                   >
                     {incidents.length === 0 ? '+ Simular Ocorrência' : 'Limpar Ocorrências'}
                   </button>
 
                   <button
                     onClick={handleRefresh}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-[#0e1726] border border-[#1b2a42] hover:bg-[#132035] transition-colors"
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 bg-[#0e1726] border border-[#1b2a42] hover:bg-[#132035] transition-colors whitespace-nowrap cursor-pointer"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 ${isRefreshing ? 'animate-spin' : ''}`} />
                     <span>Sincronizar Zabbix</span>
@@ -492,33 +538,33 @@ export const SentinelDemo: React.FC = () => {
               </div>
 
               {/* CHAMADOS GLPI Banner matching screenshot */}
-              <div className="rounded-xl bg-[#0b162a] border border-[#193052] p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="rounded-xl bg-[#0b162a] border border-[#193052] p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-900/60 border border-blue-500/40 flex items-center justify-center text-blue-300 shrink-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-900/60 border border-blue-500/40 flex items-center justify-center text-blue-300 shrink-0">
                     <LifeBuoy className="w-5 h-5 text-cyan-400" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white tracking-wide">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
                         CHAMADOS GLPI • HELPDESK TI
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-950 text-cyan-300 border border-blue-800 font-mono">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-950 text-cyan-300 border border-blue-800 font-mono shrink-0">
                         Resumo real
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-400 mt-0.5">
                       Indicadores do GLPI separados das ocorrências de rede Zabbix
                     </p>
-                    <p className="text-[11px] text-slate-400 font-mono mt-1">
+                    <p className="text-[11px] text-slate-300 font-mono mt-1 font-semibold">
                       Em atendimento: 30 • Pendentes: 3
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono w-full lg:w-auto">
                   {/* EM ABERTO: 33 */}
-                  <div className="flex items-center gap-2 bg-[#091222] px-3 py-1.5 rounded-lg border border-[#162740]">
-                    <Folder className="w-4 h-4 text-cyan-400" />
+                  <div className="flex items-center gap-2 bg-[#091222] px-3 py-2 rounded-lg border border-[#162740] justify-center sm:justify-start">
+                    <Folder className="w-4 h-4 text-cyan-400 shrink-0" />
                     <div>
                       <span className="text-[9px] text-slate-400 block uppercase">EM ABERTO</span>
                       <span className="text-sm font-bold text-white">33</span>
@@ -526,8 +572,8 @@ export const SentinelDemo: React.FC = () => {
                   </div>
 
                   {/* HOJE: 0 */}
-                  <div className="flex items-center gap-2 bg-[#091222] px-3 py-1.5 rounded-lg border border-[#162740]">
-                    <Calendar className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center gap-2 bg-[#091222] px-3 py-2 rounded-lg border border-[#162740] justify-center sm:justify-start">
+                    <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div>
                       <span className="text-[9px] text-slate-400 block uppercase">HOJE</span>
                       <span className="text-sm font-bold text-white">0</span>
@@ -537,119 +583,119 @@ export const SentinelDemo: React.FC = () => {
                   {/* Sound toggle button */}
                   <button
                     onClick={() => setSoundActive(!soundActive)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#091222] border border-[#162740] text-cyan-300 hover:text-white"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#091222] border border-[#162740] text-cyan-300 hover:text-white cursor-pointer active:scale-95"
                   >
                     {soundActive ? <Volume2 className="w-3.5 h-3.5 text-cyan-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
-                    <span className="text-[11px]">{soundActive ? 'Som Ativo' : 'Mudo'}</span>
+                    <span className="text-[11px] whitespace-nowrap">{soundActive ? 'Som Ativo' : 'Mudo'}</span>
                   </button>
 
                   {/* Acessar Chamados button */}
                   <button
                     onClick={() => alert('Integração de Helpdesk GLPI com fila de chamados corporativos.')}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#00a2cc] hover:bg-[#00b4d8] text-white font-bold text-xs transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#00a2cc] hover:bg-[#00b4d8] text-white font-bold text-xs transition-colors whitespace-nowrap cursor-pointer active:scale-95"
                   >
                     <span>Acessar Chamados</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
                 </div>
               </div>
 
               {/* 6 NOC Metric Cards matching screenshot */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
                 {/* CRÍTICOS */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-rose-400 font-bold block truncate">
                       CRÍTICOS
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">{criticosCount}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">{criticosCount}</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">
                         {criticosCount === 0 ? 'Nominal' : 'Falha(s)'}
                       </span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-rose-950/40 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                  <div className="w-7 h-7 rounded-lg bg-rose-950/40 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
                     <AlertTriangle className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* ALERTAS */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-amber-400 font-bold block truncate">
                       ALERTAS
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">{alertasCount}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Pendentes</span>
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">{alertasCount}</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">Pendentes</span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-amber-950/40 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                  <div className="w-7 h-7 rounded-lg bg-amber-950/40 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
                     <AlertTriangle className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* EM ATENDIMENTO */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-blue-400 font-bold block truncate">
                       EM ATENDIMENTO
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">{atendimentoCount}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Com chamado</span>
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">{atendimentoCount}</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">Com chamado</span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-blue-950/40 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <div className="w-7 h-7 rounded-lg bg-blue-950/40 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
                     <Clock className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* ONLINE */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold block truncate">
                       ONLINE
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">100%</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Ativos</span>
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">100%</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">Ativos</span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* DISPONIBILIDADE */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold block truncate">
                       DISPONIBILIDADE
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">99.8%</span>
-                      <span className="text-[10px] text-slate-400 font-mono">SLA 30d</span>
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">99.8%</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">SLA 30d</span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                     <Layers className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* LATÊNCIA MÉDIA */}
-                <div className="p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-purple-400 font-bold block">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#0d1424] border border-[#1f2d47] flex items-center justify-between gap-2 min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-purple-400 font-bold block truncate">
                       LATÊNCIA MÉDIA
                     </span>
                     <div className="flex items-baseline gap-1.5 mt-1">
-                      <span className="text-lg font-bold text-white font-mono">1.4</span>
-                      <span className="text-[10px] text-slate-400 font-mono">ms</span>
+                      <span className="text-base sm:text-lg font-bold text-white font-mono">1.4</span>
+                      <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono">ms</span>
                     </div>
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-purple-950/40 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                  <div className="w-7 h-7 rounded-lg bg-purple-950/40 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
                     <Zap className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -659,10 +705,10 @@ export const SentinelDemo: React.FC = () => {
               <div className="rounded-xl bg-[#090e1a] border border-[#152033] overflow-hidden">
                 {/* Table Tab Bar */}
                 <div className="p-3 border-b border-[#152033] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0c1422]">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full sm:w-auto">
                     <button
                       onClick={() => setSelectedTab('todos')}
-                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                         selectedTab === 'todos'
                           ? 'bg-[#00a2cc] text-white'
                           : 'text-slate-400 hover:text-white'
@@ -672,7 +718,7 @@ export const SentinelDemo: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setSelectedTab('criticos')}
-                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                         selectedTab === 'criticos'
                           ? 'bg-[#00a2cc] text-white'
                           : 'text-slate-400 hover:text-white'
@@ -682,7 +728,7 @@ export const SentinelDemo: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setSelectedTab('alertas')}
-                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                         selectedTab === 'alertas'
                           ? 'bg-[#00a2cc] text-white'
                           : 'text-slate-400 hover:text-white'
@@ -692,7 +738,7 @@ export const SentinelDemo: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setSelectedTab('atendimento')}
-                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                      className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                         selectedTab === 'atendimento'
                           ? 'bg-[#00a2cc] text-white'
                           : 'text-slate-400 hover:text-white'
@@ -702,7 +748,7 @@ export const SentinelDemo: React.FC = () => {
                     </button>
                   </div>
 
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono whitespace-nowrap">
                     Atualizado: {currentTime}
                   </span>
                 </div>

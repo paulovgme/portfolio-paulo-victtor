@@ -21,14 +21,22 @@ import {
   AlertTriangle, 
   Clock, 
   Search,
-  Server
+  Server,
+  Menu,
+  X
 } from 'lucide-react';
 
 export const EvoraDemo: React.FC = () => {
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncNotice, setSyncNotice] = useState<string>('');
+
+  const selectTab = (tab: string) => {
+    setActiveTab(tab);
+    setMobileSidebarOpen(false);
+  };
 
   // Mock data state
   const [routines, setRoutines] = useState<BackupRoutine[]>(INITIAL_ROUTINES);
@@ -81,25 +89,83 @@ export const EvoraDemo: React.FC = () => {
         <span>AMBIENTE DE DEMONSTRAÇÃO • DADOS FICTÍCIOS</span>
       </div>
 
+      {/* Mobile Topbar with Hamburger (visible only on mobile) */}
+      <div className="lg:hidden flex items-center justify-between bg-white border-b border-slate-200 px-4 py-3 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setMobileSidebarOpen(true)}
+            className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-[#0099cc] cursor-pointer active:scale-95 flex items-center justify-center shadow-xs"
+            aria-label="Abrir menu lateral Évora"
+            title="Abrir menu"
+          >
+            <Menu className="w-5 h-5 text-[#0099cc]" />
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-[#0099cc] flex items-center justify-center text-white shadow-xs">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div className="leading-tight">
+              <h1 className="text-xs font-black text-[#0099cc] tracking-tight">
+                ÉVORA <span className="text-[#0284c7]">BACKUP</span>
+              </h1>
+              <span className="text-[8px] font-bold text-[#f97316] uppercase tracking-wider block">
+                PAINEL MSP
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Nuvem Ativa</span>
+        </div>
+      </div>
+
       <div className="min-h-[calc(100vh-28px)] flex">
+        {/* Mobile Drawer Backdrop */}
+        {mobileSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 lg:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
         {/* ==========================================================
-            SIDEBAR ÉVORA BACKUP (Referência exata: Captura 2026-08-21 112705)
+            SIDEBAR ÉVORA BACKUP (Drawer on mobile, Static on Desktop)
             ========================================================== */}
-        <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0">
+        <aside className={`
+          fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-white border-r border-slate-200/90 flex flex-col shadow-2xl transition-transform duration-200
+          lg:static lg:w-64 lg:flex lg:translate-x-0 lg:shadow-none shrink-0
+          ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 hidden lg:flex'}
+        `}>
           {/* Logo Header */}
           <div className="p-4 border-b border-slate-100 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#0099cc] flex items-center justify-center text-white shadow-xs">
-                <ShieldCheck className="w-6 h-6" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-[#0099cc] flex items-center justify-center text-white shadow-xs">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h1 className="text-base font-black text-[#0099cc] tracking-tight leading-none">
+                    ÉVORA <span className="text-[#0284c7]">BACKUP</span>
+                  </h1>
+                  <span className="text-[9px] font-bold text-[#f97316] tracking-widest block uppercase mt-0.5">
+                    PAINEL DE CONTROLE
+                  </span>
+                </div>
               </div>
-              <div>
-                <h1 className="text-base font-black text-[#0099cc] tracking-tight leading-none">
-                  ÉVORA <span className="text-[#0284c7]">BACKUP</span>
-                </h1>
-                <span className="text-[9px] font-bold text-[#f97316] tracking-widest block uppercase mt-0.5">
-                  PAINEL DE CONTROLE
-                </span>
-              </div>
+
+              {/* Close Button on Mobile Drawer */}
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(false)}
+                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 cursor-pointer active:scale-95"
+                aria-label="Fechar menu lateral"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Acessar Landing Page button matching screenshot */}
@@ -115,8 +181,8 @@ export const EvoraDemo: React.FC = () => {
           {/* Página Principal do Painel item (active teal tab) */}
           <div className="p-3 pb-0">
             <button
-              onClick={() => setActiveTab('dashboard')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md bg-[#0099cc] text-white text-xs font-semibold shadow-xs"
+              onClick={() => selectTab('dashboard')}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md bg-[#0099cc] text-white text-xs font-semibold shadow-xs cursor-pointer"
             >
               <Home className="w-4 h-4" />
               <span>Página Principal do Painel</span>
@@ -133,8 +199,8 @@ export const EvoraDemo: React.FC = () => {
               <div className="space-y-0.5">
                 {/* Dashboard & Gráficos */}
                 <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('dashboard')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'dashboard'
                       ? 'bg-[#0099cc] text-white shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -149,8 +215,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* Monitor de Backups */}
                 <button
-                  onClick={() => setActiveTab('monitor')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('monitor')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'monitor'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -164,8 +230,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* Backups de Clientes */}
                 <button
-                  onClick={() => setActiveTab('backups')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('backups')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'backups'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -182,8 +248,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* Contas de Clientes */}
                 <button
-                  onClick={() => setActiveTab('clientes')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('clientes')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'clientes'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -200,8 +266,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* Planos & Preços */}
                 <button
-                  onClick={() => setActiveTab('planos')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('planos')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'planos'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -216,8 +282,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* Logs de Auditoria */}
                 <button
-                  onClick={() => setActiveTab('logs')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('logs')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'logs'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -231,8 +297,8 @@ export const EvoraDemo: React.FC = () => {
 
                 {/* API & Servidor de Backup */}
                 <button
-                  onClick={() => setActiveTab('api')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors ${
+                  onClick={() => selectTab('api')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md font-medium transition-colors cursor-pointer ${
                     activeTab === 'api'
                       ? 'bg-[#0099cc] text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -252,7 +318,10 @@ export const EvoraDemo: React.FC = () => {
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 block mb-1">
                 ACESSO RÁPIDO ÀS ROTINAS
               </span>
-              <div className="p-2 rounded-md bg-slate-50 hover:bg-slate-100 flex items-center justify-between text-xs cursor-pointer">
+              <div 
+                onClick={() => selectTab('backups')}
+                className="p-2 rounded-md bg-slate-50 hover:bg-slate-100 flex items-center justify-between text-xs cursor-pointer"
+              >
                 <div className="flex items-center gap-2">
                   <Server className="w-3.5 h-3.5 text-slate-500" />
                   <span className="text-slate-700 truncate max-w-[110px]">Évora Tecnologia (Ambi...</span>
@@ -280,11 +349,11 @@ export const EvoraDemo: React.FC = () => {
         {/* ==========================================================
             CONTEÚDO PRINCIPAL ÉVORA BACKUP (Referência exata: Captura 2026-08-21 112705)
             ========================================================== */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#f8fafc] p-6 lg:p-8 space-y-6 overflow-y-auto">
+        <main className="flex-1 flex flex-col min-w-0 bg-[#f8fafc] p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 overflow-y-auto w-full">
           {/* Header Row matching screenshot */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Página Principal • Painel de Controle Évora
               </h1>
               <p className="text-xs text-slate-500 mt-1">
@@ -292,10 +361,10 @@ export const EvoraDemo: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 onClick={handleSyncCloud}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-white border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${isSyncing ? 'animate-spin' : ''}`} />
                 <span>Sincronizar Nuvem</span>
@@ -303,7 +372,7 @@ export const EvoraDemo: React.FC = () => {
 
               <button
                 onClick={() => setShowNewClientModal(true)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0099cc] hover:bg-[#0088b6] text-xs font-semibold text-white transition-colors shadow-2xs cursor-pointer"
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg bg-[#0099cc] hover:bg-[#0088b6] text-xs font-semibold text-white transition-colors shadow-2xs cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Novo Cliente</span>
@@ -320,66 +389,66 @@ export const EvoraDemo: React.FC = () => {
 
           {/* VIEW: DASHBOARD (Default matching screenshot) */}
           {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              {/* 4 Metric Cards matching screenshot exactly */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-4 sm:space-y-6">
+              {/* 4 Metric Cards matching screenshot exactly (2x2 on mobile, 4 cols on desktop) */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {/* CAPACIDADE TOTAL MASTER */}
-                <div className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                  <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block font-mono">
+                <div className="p-3.5 sm:p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1 min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-slate-600 uppercase tracking-wider block font-mono truncate">
                     CAPACIDADE TOTAL MASTER
                   </span>
-                  <div className="text-2xl font-black text-slate-900 tracking-tight">
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                     100 GB
                   </div>
-                  <p className="text-[11px] text-slate-400 pt-1">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 pt-0.5 sm:pt-1 truncate">
                     Cluster Évora Cloud (Ambiente de Testes)
                   </p>
                 </div>
 
                 {/* CAPACIDADE ALOCADA */}
-                <div className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                  <span className="text-[11px] font-bold text-[#0284c7] uppercase tracking-wider block font-mono">
+                <div className="p-3.5 sm:p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1 min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-[#0284c7] uppercase tracking-wider block font-mono truncate">
                     CAPACIDADE ALOCADA
                   </span>
-                  <div className="text-2xl font-black text-[#0284c7] tracking-tight">
+                  <div className="text-xl sm:text-2xl font-black text-[#0284c7] tracking-tight">
                     100 GB
                   </div>
-                  <p className="text-[11px] text-slate-400 pt-1">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 pt-0.5 sm:pt-1 truncate">
                     Soma das quotas dos 1 clientes
                   </p>
                 </div>
 
                 {/* CAPACIDADE UTILIZADA */}
-                <div className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                  <span className="text-[11px] font-bold text-[#0099cc] uppercase tracking-wider block font-mono">
+                <div className="p-3.5 sm:p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1 min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-[#0099cc] uppercase tracking-wider block font-mono truncate">
                     CAPACIDADE UTILIZADA
                   </span>
-                  <div className="text-2xl font-black text-[#0099cc] tracking-tight">
+                  <div className="text-xl sm:text-2xl font-black text-[#0099cc] tracking-tight">
                     0.0 GB
                   </div>
-                  <p className="text-[11px] text-slate-400 pt-1">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 pt-0.5 sm:pt-1 truncate">
                     Volume gravado em disco na nuvem
                   </p>
                 </div>
 
                 {/* ESPAÇO DISPONÍVEL LIVRE */}
-                <div className="p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                  <span className="text-[11px] font-bold text-[#059669] uppercase tracking-wider block font-mono">
+                <div className="p-3.5 sm:p-5 rounded-xl bg-white border border-slate-200/80 shadow-2xs space-y-1 min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-[#059669] uppercase tracking-wider block font-mono truncate">
                     ESPAÇO DISPONÍVEL LIVRE
                   </span>
-                  <div className="text-2xl font-black text-[#059669] tracking-tight">
+                  <div className="text-xl sm:text-2xl font-black text-[#059669] tracking-tight">
                     0 GB
                   </div>
-                  <p className="text-[11px] text-slate-400 pt-1">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 pt-0.5 sm:pt-1 truncate">
                     Margem livre de armazenamento
                   </p>
                 </div>
               </div>
 
               {/* Middle Row: 2 Chart Cards matching screenshot exactly */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Card 1: Status das Rotinas de Backup */}
-                <div className="p-6 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-6">
+                <div className="p-4 sm:p-6 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-4 sm:space-y-6">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -418,7 +487,7 @@ export const EvoraDemo: React.FC = () => {
                     </div>
 
                     {/* Chart Legend matching screenshot */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium pt-4 text-slate-600">
+                    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium pt-4 text-slate-600">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                         <span>Alerta / Limite (0)</span>
@@ -438,8 +507,8 @@ export const EvoraDemo: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Summary Blocks below chart matching screenshot */}
-                  <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                  {/* Summary Blocks below chart (2x2 on mobile, 4 cols on tablet/desktop) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                     <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
                       <span className="text-[10px] text-emerald-800 font-medium block">Sucesso</span>
                       <span className="text-xs font-bold text-emerald-700 font-mono">0 OK</span>
@@ -461,17 +530,17 @@ export const EvoraDemo: React.FC = () => {
                   {/* Red Alert Button matching screenshot */}
                   <div>
                     <button
-                      onClick={() => setActiveTab('monitor')}
-                      className="w-full py-2.5 px-4 rounded-lg bg-[#e11d48] hover:bg-[#be123c] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-2xs cursor-pointer"
+                      onClick={() => selectTab('monitor')}
+                      className="w-full py-2.5 px-3 rounded-lg bg-[#e11d48] hover:bg-[#be123c] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer text-center"
                     >
-                      <ShieldAlert className="w-4 h-4" />
+                      <ShieldAlert className="w-4 h-4 shrink-0" />
                       <span>Acessar Monitor de Backups (1 caso com atenção / pendente) →</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Card 2: Distribuição de Armazenamento */}
-                <div className="p-6 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-6">
+                <div className="p-4 sm:p-6 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-4 sm:space-y-6">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -510,7 +579,7 @@ export const EvoraDemo: React.FC = () => {
                     </div>
 
                     {/* Chart Legend matching screenshot */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium pt-4 text-slate-600">
+                    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium pt-4 text-slate-600">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
                         <span>Espaço Livre (0.0 GB)</span>
@@ -541,7 +610,7 @@ export const EvoraDemo: React.FC = () => {
               </div>
 
               {/* Bottom footer timestamp matching screenshot */}
-              <div className="flex items-center justify-between text-xs text-slate-400 font-mono pt-4 border-t border-slate-200/80">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-slate-400 font-mono pt-4 border-t border-slate-200/80">
                 <span>Évora Cloud Storage v2.4 • Cluster Operacional Ativo</span>
                 <span>sexta-feira, 21 de agosto de 2026 • 11:27 (Hora local)</span>
               </div>
