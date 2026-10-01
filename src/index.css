@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
+
+/* CSS Design Tokens for Light and Carbon Themes */
+:root, [data-theme="light"] {
+  --background: #F7F7F8;
+  --surface: #F1F1F3;
+  --card: #FFFFFF;
+  --card-hover: #F8F9FA;
+  --border: #E4E4E7;
+  --border-strong: #D4D4D8;
+  --text-primary: #18181B;
+  --text-secondary: #71717A;
+  --text-muted: #A1A1AA;
+  --accent: #0284c7;
+  --accent-hover: #0369a1;
+  --accent-subtle: rgba(2, 132, 199, 0.08);
+  --accent-border: rgba(2, 132, 199, 0.3);
+  --accent-text: #0284c7;
+  --nav-backdrop: rgba(255, 255, 255, 0.88);
+}
+
+[data-theme="dark"], .dark {
+  --background: #18181B;
+  --surface: #202124;
+  --card: #27272A;
+  --card-hover: #2F2F33;
+  --border: #3F3F46;
+  --border-strong: #52525B;
+  --text-primary: #F4F4F5;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --accent: #06b6d4;
+  --accent-hover: #0891b2;
+  --accent-subtle: rgba(6, 182, 212, 0.12);
+  --accent-border: rgba(6, 182, 212, 0.3);
+  --accent-text: #00c0f0;
+  --nav-backdrop: rgba(24, 24, 27, 0.88);
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Portfolio Semantic Utility Classes */
+.bg-portfolio-main {
+  background-color: var(--background);
+}
+
+.bg-portfolio-surface {
+  background-color: var(--surface);
+}
+
+.bg-portfolio-card {
+  background-color: var(--card);
+}
+
+.bg-portfolio-card-hover:hover {
+  background-color: var(--card-hover);
+}
+
+.bg-portfolio-accent {
+  background-color: var(--accent);
+}
+
+.bg-portfolio-accent-subtle {
+  background-color: var(--accent-subtle);
+}
+
+.border-portfolio {
+  border-color: var(--border);
+}
+
+.border-portfolio-strong {
+  border-color: var(--border-strong);
+}
+
+.border-portfolio-accent {
+  border-color: var(--accent-border);
+}
+
+.text-portfolio-primary {
+  color: var(--text-primary);
+}
+
+.text-portfolio-secondary {
+  color: var(--text-secondary);
+}
+
+.text-portfolio-muted {
+  color: var(--text-muted);
+}
+
+.text-portfolio-accent {
+  color: var(--accent-text);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Print Configuration for Curriculo */
+@page {
+  size: A4;
+  margin: 12mm 15mm;
+}
+
+@media print {
+  html, body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #18181b !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  header, footer, nav, .no-print, button, [role="group"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-page {
+    box-shadow: none !important;
+    border: none !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #18181b !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Keep sections together when printing on A4 */
+  .resume-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .resume-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Force print typography to crisp dark tones regardless of active theme */
+  .print-page * {
+    color: #18181b !important;
+    border-color: #e4e4e7 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-title {
+    color: #09090b !important;
+    font-weight: 700 !important;
+  }
+
+  .print-subtitle {
+    color: #27272a !important;
+    font-weight: 600 !important;
+  }
+
+  .print-muted {
+    color: #52525b !important;
+  }
+
+  .print-tag {
+    background-color: #f4f4f5 !important;
+    border: 1px solid #e4e4e7 !important;
+    color: #27272a !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}
