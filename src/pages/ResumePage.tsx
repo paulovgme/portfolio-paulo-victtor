@@ -82,7 +82,7 @@ export const ResumePage: React.FC = () => {
                 Profissional de Tecnologia da Informação com experiência sólida em suporte técnico, infraestrutura, redes, sistemas e ambientes corporativos. Minha trajetória envolve atendimento presencial e remoto a usuários corporativos, troubleshooting minucioso, manutenção de infraestrutura, redes de computadores, servidores e suporte contínuo a ambientes empresariais.
               </p>
               <p>
-                Posteriormente, passei também a desenvolver ferramentas próprias para solucionar necessidades reais encontradas no dia a dia da TI, atuando na arquitetura e implementação de sistemas funcionais como o SentinelTI (monitoramento e NOC), Sistema de Gestão de Estoque (controle de patrimônio e periféricos) e Évora Backup (orquestração de rotinas e quotas de armazenamento).
+                Posteriormente, passei também a desenvolver ferramentas próprias para solucionar necessidades reais encontradas no dia a dia da TI, atuando na arquitetura e implementação de sistemas funcionais como o SentinelTI (monitoramento e NOC), Gestão de TI (chamados, ordens de serviço e estoque) e Évora Backup (orquestração de rotinas e quotas de armazenamento).
               </p>
               <p>
                 Utilizo Inteligência Artificial como ferramenta de apoio durante desenvolvimento, pesquisa técnica, troubleshooting, prototipação e documentação de software.

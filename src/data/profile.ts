@@ -34,7 +34,7 @@ export const PROFILE = {
 
   summary: `Profissional de Tecnologia da Informação com experiência consolidada em suporte técnico, infraestrutura, redes, sistemas e ambientes corporativos. Minha trajetória envolve atendimento a usuários, troubleshooting de alta complexidade, manutenção de infraestrutura, redes cabeadas e sem fio, servidores e suporte contínuo a ambientes empresariais.
 
-Posteriormente, passei também a desenvolver ferramentas próprias para solucionar necessidades reais encontradas no dia a dia da TI corporativa, tais como monitoramento centralizado de ativos (SentinelTI), controle de inventário físico e periféricos (Sistema de Gestão de Estoque) e orquestração de rotinas e quotas de armazenamento (Évora Backup).
+Posteriormente, passei também a desenvolver ferramentas próprias para solucionar necessidades reais encontradas no dia a dia da TI corporativa, tais como monitoramento centralizado de ativos (SentinelTI), gestão de operações de TI, chamados e inventário (Gestão de TI) e orquestração de rotinas e quotas de armazenamento (Évora Backup).
 
 Utilizo Inteligência Artificial de forma transparente e metódica como ferramenta de apoio durante o desenvolvimento, pesquisa técnica, troubleshooting, prototipação rápida e documentação de sistemas.`,
 

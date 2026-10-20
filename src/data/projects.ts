@@ -112,67 +112,69 @@ export const PROJECTS: ProjectData[] = [
   {
     id: "estoque",
     slug: "estoque",
-    name: "Sistema de Gestão de Estoque",
-    category: "Gestão de Estoque e Ativos de TI",
-    summary: "Aplicação focada no controle de inventário físico de peças, insumos, periféricos e equipamentos de informática com rotinas de entrada, saída, alertas de saldo e relatórios.",
+    name: "Gestão de TI",
+    category: "Plataforma de Gestão de TI, Chamados, Ordens de Serviço e Estoque",
+    summary: "Sistema web desenvolvido para centralizar operações de Tecnologia da Informação, integrando gerenciamento de chamados técnicos, ordens de serviço, controle de estoque, movimentações de materiais, cadastro de equipamentos, usuários e permissões, descarte de equipamentos e emissão de documentos em PDF.",
     demoRoute: "/demo/estoque",
     detailRoute: "/projetos/estoque",
     technologies: [
       "Python",
       "Streamlit",
       "Supabase",
+      "PostgreSQL",
       "Pandas",
       "ReportLab"
     ],
-    problem: "Em equipes de TI que gerenciam suprimentos (fontes, cabos, tintas, discos rígidos, placas e periféricos), o controle por planilhas manuais frequentemente causava descompasso de saldo, falta repentina de insumos essenciais em atendimentos emergenciais e dificuldade na auditoria de descarte de hardware obsoleto.",
-    solution: "Desenvolvimento de uma ferramenta ágil construída em Python com interface Streamlit, integrada a banco Supabase e biblioteca Pandas para processamento veloz de dados. A ferramenta unifica cadastros, movimentações rastreadas e emissão de laudos de descarte de patrimônio.",
-    howItWorks: "O operador autentica-se no sistema e tem acesso imediato à tabela de consulta com busca dinâmica por nome ou marca. Movimentações de entrada ou saída atualizam os saldos em tempo real e sinalizam alertas quando a quantidade atinge o nível mínimo parametrizado. Módulos adicionais permitem emitir relatórios em PDF com a biblioteca ReportLab e registrar equipamentos destinados a descarte.",
+    problem: "Em equipes de suporte e infraestrutura de TI, a gestão descentralizada — com chamados em canais informais, controle de patrimônio e estoque em planilhas dispersas, ordens de serviço em papel e descartes sem laudos formais — gera lentidão na resolução de incidentes, falta de rastreabilidade de peças e materiais alocados sem vínculo com os atendimentos.",
+    solution: "Desenvolvimento do Évora Gestão (Gestão de TI), uma plataforma integrada desenvolvida em Python e Streamlit conectada a banco PostgreSQL/Supabase. O sistema centraliza a abertura e triagem de chamados técnicos, emissão e fechamento de ordens de serviço (O.S.), consulta e movimentações de estoque em tempo real, registro de descartes com emissão de laudos em PDF via ReportLab e auditoria de usuários com RBAC.",
+    howItWorks: "O analista de TI autentica-se e acessa o Painel Inicial com visão panorâmica de chamados abertos, pendentes, encerrados, ordens de serviço e contagem consolidada de produtos cadastrados. Pelo menu lateral organizado em 10 módulos, a equipe gerencia a fila de chamados técnicos e O.S., consulta o inventário físico com alertas automáticos de saldo mínimo, registra entradas e saídas de insumos vinculadas a atendimentos, emite termos e relatórios gerenciais em PDF com ReportLab e gerencia perfis de acesso.",
     keyFeatures: [
-      "Consulta ágil de estoque com pesquisa instantânea por nome, marca ou categoria",
-      "Controle minucioso de saldo com alertas visuais de reposição necessária",
-      "Registro detalhado de movimentações de Entrada e Saída",
-      "Módulo de cadastro de novos produtos, peças e consumíveis",
-      "Módulo de correção de cadastros e ajuste administrativo de saldo",
-      "Histórico completo de transações com filtros de período",
-      "Emissão de relatórios gerenciais e laudos técnicos em PDF com ReportLab",
-      "Controle de descarte de equipamentos com registro de justificativa técnica e estado",
-      "Registro de fotografias e evidências de itens avariados ou obsoletos",
-      "Gerenciamento de usuários e níveis de permissão operacional"
+      "Painel inicial com indicadores consolidados de chamados abertos, pendentes, encerrados, O.S. e produtos",
+      "Gestão completa de chamados técnicos com prioridades, categorias e status de atendimento",
+      "Emissão, acompanhamento e encerramento de Ordens de Serviço (O.S.)",
+      "Consulta ágil de estoque com pesquisa instantânea por nome, marca, modelo ou categoria",
+      "Controle rigoroso de saldo com alertas visuais automáticos de nível de reposição",
+      "Registro de movimentações rastreadas de Entrada e Saída vinculadas a chamados e técnicos",
+      "Cadastro rápido de novos produtos, componentes, consumíveis e equipamentos",
+      "Módulo de correção cadastral e ajuste de inventário físico",
+      "Histórico auditado de transações e geração de relatórios e termos em PDF com ReportLab",
+      "Controle de descarte ambiental e baixa patrimonial com registro de laudo técnico",
+      "Gerenciamento de usuários, operadores e permissões de acesso (RBAC)"
     ],
     architecture: {
       diagram: [
         {
-          label: "ENTRADAS E SAÍDAS",
+          label: "CHAMADOS & ORDENS DE SERVIÇO",
           sublabel: "Operações Diárias de TI",
-          description: "Registro de requisições de atendimento, reposição de suprimentos e novas compras."
+          description: "Abertura de tickets, requisições de atendimento e ordens de serviço para manutenções internas ou externas."
         },
         {
           label: "INTERFACE STREAMLIT",
           sublabel: "Python / Data-Driven UI",
-          description: "Componentes nativos, formulários reativos, visualização tabular rápida e filtros."
+          description: "Componentes nativos, formulários reativos, visualização tabular rápida, filtros dinâmicos e navegação em 10 módulos."
         },
         {
           label: "MOTOR PANDAS",
           sublabel: "Processamento e Normalização",
-          description: "Transformação de dados em memória, cálculo dinâmico de médias e alertas de estoque."
+          description: "Transformação de dados em memória, cálculo dinâmico de médias, consolidação de métricas e alertas de estoque."
         },
         {
-          label: "BANCO SUPABASE",
-          sublabel: "PostgreSQL na Nuvem",
-          description: "Persistência segura das tabelas de produtos, movimentações, descarte e credenciais."
+          label: "BANCO SUPABASE / POSTGRESQL",
+          sublabel: "Persistência em Nuvem",
+          description: "Armazenamento relacional de chamados, O.S., inventário de produtos, movimentações, descarte e controle de usuários."
         },
         {
           label: "REPORTLAB PDF",
           sublabel: "Geração de Documentos",
-          description: "Criação programática de termos de entrega, laudos de descarte e inventários em PDF."
+          description: "Criação programática de relatórios gerenciais, termos de responsabilidade e laudos técnicos de descarte em PDF."
         }
       ],
-      notes: "Construído sobre o ecossistema Python com foco em entrega prática, ergonomia para o operador de suporte e alta velocidade de resposta."
+      notes: "Construído sobre o ecossistema Python com foco em alta produtividade para analistas de suporte, ergonomia operacional e rastreabilidade total de ativos."
     },
     visualTheme: {
       accentColor: "#ef4444",
-      styleTag: "Streamlit UI • Gestão Prática",
-      badgeLabel: "Inventário de TI"
+      styleTag: "Streamlit UI • Évora Gestão",
+      badgeLabel: "Évora Gestão"
     }
   },
   {
